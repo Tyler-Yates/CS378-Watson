@@ -1,4 +1,8 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -53,8 +57,7 @@ public class Watson {
                 cmdLine.getOptionValue(PASSWORD_OPTION_NAME));
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
 
-        System.out.println(
-                askQuestion(credentialsProvider, cmdLine.getOptionValue(QUESTION_OPTION_NAME)));
+        prettyPrint(askQuestion(credentialsProvider, cmdLine.getOptionValue(QUESTION_OPTION_NAME)));
     }
 
     /**
@@ -90,5 +93,11 @@ public class Watson {
         final Option option = new Option(optionName, true, description);
         option.setRequired(true);
         return option;
+    }
+
+    private static void prettyPrint(String jsonString) {
+        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        final JsonElement jsonElement = new JsonParser().parse(jsonString);
+        System.out.println(gson.toJson(jsonElement));
     }
 }
