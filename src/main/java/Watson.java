@@ -1,5 +1,4 @@
 import com.google.gson.JsonObject;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -25,24 +24,17 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
 public class Watson {
-    private static final String URL = "https://watson-wdc01.ihost.com/instance/540/deepqa/v1/question";
-    private static final String USERNAME_PARAMETER_NAME = "username";
-    private static final String PASSWORD_PARAMETER_NAME = "password";
-    private static final String QUESTION_PARAMETER_NAME = "question";
+    private static final String URL = "https://watson-wdc01.ihost" + "" +
+            ".com/instance/540/deepqa/v1/question";
+    private static final String USERNAME_OPTION_NAME = "username";
+    private static final String PASSWORD_OPTION_NAME = "password";
+    private static final String QUESTION_OPTION_NAME = "question";
 
     public static void main(String args[]) throws IOException {
         final Options options = new Options();
-        Option opt = new Option(USERNAME_PARAMETER_NAME, true, "Username");
-        opt.setRequired(true);
-        options.addOption(opt);
-
-        opt = new Option(PASSWORD_PARAMETER_NAME, true, "Password for the given user");
-        opt.setRequired(true);
-        options.addOption(opt);
-
-        opt = new Option(QUESTION_PARAMETER_NAME, true, "The question to ask Watson");
-        opt.setRequired(true);
-        options.addOption(opt);
+        options.addOption(createRequiredOption(USERNAME_OPTION_NAME, "Username"));
+        options.addOption(createRequiredOption(PASSWORD_OPTION_NAME, "Password"));
+        options.addOption(createRequiredOption(QUESTION_OPTION_NAME, "Question to ask Watson"));
 
         final CommandLineParser clp = new DefaultParser();
         CommandLine cmdLine;
@@ -57,15 +49,18 @@ public class Watson {
         }
 
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        final Credentials credentials = new UsernamePasswordCredentials(cmdLine.getOptionValue
-                (USERNAME_PARAMETER_NAME), cmdLine.getOptionValue(PASSWORD_PARAMETER_NAME));
+        final Credentials credentials = new UsernamePasswordCredentials(
+                cmdLine.getOptionValue(USERNAME_OPTION_NAME),
+                cmdLine.getOptionValue(PASSWORD_OPTION_NAME));
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
 
-        System.out.println(askQuestion(credentialsProvider, cmdLine.getOptionValue(QUESTION_PARAMETER_NAME)));
+        System.out.println(
+                askQuestion(credentialsProvider, cmdLine.getOptionValue(QUESTION_OPTION_NAME)));
     }
 
     /**
-     * Asks Watson a question and returns Watson's response using the given credentials to authenticate with the URL.
+     * Asks Watson a question and returns Watson's response using the given credentials to
+     * authenticate with the URL.
      *
      * @param credentialsProvider the authentication information
      * @param question the question to ask Watson
@@ -74,8 +69,10 @@ public class Watson {
      *
      * @throws IOException
      */
-    public static String askQuestion(CredentialsProvider credentialsProvider, String question) throws IOException {
-        final HttpClient httpClient = HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build();
+    public static String askQuestion(CredentialsProvider credentialsProvider,
+            String question) throws IOException {
+        final HttpClient httpClient = HttpClients.custom().setDefaultCredentialsProvider(
+                credentialsProvider).build();
         final HttpPost httpPost = new HttpPost(URL);
         httpPost.setHeader(new BasicHeader("X-SyncTimeout", "30"));
         httpPost.setHeader(new BasicHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON));
@@ -88,5 +85,11 @@ public class Watson {
 
         final HttpResponse httpResponse = httpClient.execute(httpPost);
         return IOUtils.toString(httpResponse.getEntity().getContent());
+    }
+
+    private static Option createRequiredOption(String optionName, String description) {
+        final Option option = new Option(optionName, true, description);
+        option.setRequired(true);
+        return option;
     }
 }
