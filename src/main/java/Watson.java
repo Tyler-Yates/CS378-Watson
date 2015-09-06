@@ -33,6 +33,16 @@ public class Watson {
     private static final String PASSWORD_OPTION_NAME = "password";
     private static final String QUESTION_OPTION_NAME = "question";
 
+    /**
+     * Asks Watson a question with the given credentials and prints the results out to the terminal.
+     * <p/>
+     * Usage:<br/>
+     * {@code Watson -username "[username]" -password "[password]" -question "[question text]"}
+     *
+     * @param args the given username, password, and question
+     *
+     * @throws IOException
+     */
     public static void main(String args[]) throws IOException {
         final Options options = new Options();
         options.addOption(createRequiredOption(USERNAME_OPTION_NAME, "Username"));
