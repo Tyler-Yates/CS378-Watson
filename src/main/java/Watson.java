@@ -24,8 +24,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
 public class Watson {
-    private static final String URL = "https://watson-wdc01.ihost" + "" +
-            ".com/instance/540/deepqa/v1/question";
+    private static final String URL = "https://watson-wdc01.ihost.com/instance/540/deepqa/v1/question";
     private static final String USERNAME_OPTION_NAME = "username";
     private static final String PASSWORD_OPTION_NAME = "password";
     private static final String QUESTION_OPTION_NAME = "question";
